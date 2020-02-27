@@ -1,8 +1,3 @@
-//
-//  GameViewController.swift
-//  ShapesNinja
-//
-//  Created by Dounia Belannab on 2/6/20.
 //  Copyright © 2020 Dounia Belannab. All rights reserved.
 //
 
@@ -10,51 +5,28 @@ import UIKit
 import SpriteKit
 import GameplayKit
 
+
 class GameViewController: UIViewController {
 
+    weak var gameScene: SCNScene?
+
     override func viewDidLoad() {
+
         super.viewDidLoad()
-        
-        // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
-        // including entities and graphs.
-        if let scene = GKScene(fileNamed: "GameScene") {
-            
-            // Get the SKScene from the loaded GKScene
-            if let sceneNode = scene.rootNode as! GameScene? {
-                
-                // Copy gameplay related content over to the scene
-                sceneNode.entities = scene.entities
-                sceneNode.graphs = scene.graphs
-                
-                // Set the scale mode to scale to fit the window
-                sceneNode.scaleMode = .aspectFill
-                
-                // Present the scene
-                if let view = self.view as! SKView? {
-                    view.presentScene(sceneNode)
-                    
-                    view.ignoresSiblingOrder = true
-                    
-                    view.showsFPS = true
-                    view.showsNodeCount = true
-                }
-            }
+        if let view = self.view as? SCNView {
+            view.backgroundColor = UIColor.black
+            gameScene = GameScene().start(mainSceneView: view)
+            view.scene = self.gameScene
+            view.autoenablesDefaultLighting = true
         }
-    }
-
-    override var shouldAutorotate: Bool {
-        return true
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
-        } else {
-            return .all
-        }
-    }
-
-    override var prefersStatusBarHidden: Bool {
-        return true
     }
 }
+
+extension GameViewController {
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let gameScene = self.gameScene as? GameScene else {return}
+        gameScene.touchesBegan(touches, with: event)
+    }
+}
+
